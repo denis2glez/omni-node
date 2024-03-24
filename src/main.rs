@@ -1,8 +1,7 @@
-use std::net::IpAddr;
-
 use clap::Parser;
 use omni_node::{client, server};
 use serde::Serialize;
+use std::net::IpAddr;
 
 #[derive(clap::ValueEnum, Clone, Default, Debug, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -29,6 +28,7 @@ struct Cli {
     #[arg(short, long, default_value = "9696")]
     port_server: Option<u16>,
 }
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
