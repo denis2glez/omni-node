@@ -31,6 +31,12 @@ struct Cli {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    // Set up tracing subscribers.
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::DEBUG)
+        .init();
+
+    // Parse command line arguments.
     let cli = Cli::parse();
 
     match cli.mode {

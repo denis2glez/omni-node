@@ -15,7 +15,7 @@ pub async fn start(ip_addr: Option<IpAddr>, port: Option<u16>) -> anyhow::Result
     let listener = TcpListener::bind((ip_addr, port))
         .await
         .context("Failed to bind to the TCP socket.")?;
-    println!("Listening on: {}", listener.local_addr()?);
+    tracing::info!("Listening on: {}", listener.local_addr()?);
 
     loop {
         // Asynchronously wait for an inbound socket.
@@ -24,7 +24,7 @@ pub async fn start(ip_addr: Option<IpAddr>, port: Option<u16>) -> anyhow::Result
             .await
             .context("Failed to accept new incoming connection.")?;
 
-        println!("Incoming request from client {addr}.");
+        tracing::info!("Incoming request from client {addr}.");
 
         // Delimit frames using a length header.
         let transport = Framed::new(stream, LengthDelimitedCodec::new());
@@ -40,7 +40,7 @@ pub async fn start(ip_addr: Option<IpAddr>, port: Option<u16>) -> anyhow::Result
                 .await
                 .expect("Failed to get request from client")
             {
-                println!("Receiving job ({request:?})...");
+                tracing::info!("Receiving job ({request:?})...");
             }
 
             let response = Response { max_jobs: 42 };

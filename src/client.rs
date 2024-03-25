@@ -52,7 +52,7 @@ pub async fn start(ip_addr: Option<IpAddr>, port: Option<u16>) -> anyhow::Result
             .await
             .context("Failed to get response from server")?
         {
-            println!(
+            tracing::info!(
                 "The busiest server activity in the future contains {} jobs.",
                 response.max_jobs
             );
