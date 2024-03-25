@@ -2,6 +2,8 @@ use clap::Parser;
 use omni_node::{client, server};
 use serde::Serialize;
 use std::net::IpAddr;
+use tracing::level_filters::LevelFilter;
+use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
 #[derive(clap::ValueEnum, Clone, Default, Debug, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -32,8 +34,13 @@ struct Cli {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // Set up tracing subscribers.
-    tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::DEBUG)
+    tracing_subscriber::registry()
+        .with(fmt::layer())
+        .with(
+            EnvFilter::builder()
+                .with_default_directive(LevelFilter::DEBUG.into())
+                .from_env_lossy(),
+        )
         .init();
 
     // Parse command line arguments.
