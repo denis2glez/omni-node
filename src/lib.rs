@@ -7,7 +7,7 @@ use std::time::Duration;
 use uuid::Uuid;
 
 /// Clients will send information about scheduled jobs in the form of (start time, duration, id).
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Ord, PartialOrd, Eq, PartialEq)]
 pub struct Request {
     /// Random timestamp in the near future.
     pub start_time: DateTime<Utc>,
