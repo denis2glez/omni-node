@@ -16,7 +16,7 @@ futures = "0.3"
 rand = "0.8"
 serde = { version = "1.0", features = ["derive"] }
 tokio = { version = "1.36", features = ["full"] }
-tokio-serde = { version = "0.9", features = ["json"] }
+tokio-serde = { version = "0.9", features = ["messagepack"] }
 tokio-util = { version = "0.7", features = ["codec"] }
 uuid = { version = "1.8", features = [
     "v4",

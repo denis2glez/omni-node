@@ -2,7 +2,7 @@ use anyhow::Context;
 use futures::prelude::*;
 use std::net::{IpAddr, Ipv4Addr};
 use tokio::net::TcpListener;
-use tokio_serde::formats::Json;
+use tokio_serde::formats::MessagePack;
 use tokio_util::codec::{Framed, LengthDelimitedCodec};
 
 use crate::{Request, Response};
@@ -29,8 +29,9 @@ pub async fn start(ip_addr: Option<IpAddr>, port: Option<u16>) -> anyhow::Result
         // Delimit frames using a length header.
         let transport = Framed::new(stream, LengthDelimitedCodec::new());
 
-        // Serialize frames with JSON.
-        let mut framed = tokio_serde::Framed::new(transport, Json::<Request, Response>::default());
+        // Serialize frames with MessagePack.
+        let mut framed =
+            tokio_serde::Framed::new(transport, MessagePack::<Request, Response>::default());
 
         // Spawning a task enables the task to execute concurrently to other tasks.
         tokio::spawn(async move {

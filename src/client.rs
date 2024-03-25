@@ -6,7 +6,7 @@ use std::net::{IpAddr, Ipv4Addr};
 use std::thread::sleep;
 use std::time::Duration;
 use tokio::net::TcpStream;
-use tokio_serde::formats::Json;
+use tokio_serde::formats::MessagePack;
 use tokio_util::codec::{Framed, LengthDelimitedCodec};
 use uuid::Uuid;
 
@@ -29,8 +29,9 @@ pub async fn start(ip_addr: Option<IpAddr>, port: Option<u16>) -> anyhow::Result
         // Delimit frames using a length header.
         let transport = Framed::new(stream, LengthDelimitedCodec::new());
 
-        // Serialize frames with JSON.
-        let mut framed = tokio_serde::Framed::new(transport, Json::<Response, Request>::default());
+        // Serialize frames with MessagePack.
+        let mut framed =
+            tokio_serde::Framed::new(transport, MessagePack::<Response, Request>::default());
 
         let now = Local::now().timestamp_millis();
 
