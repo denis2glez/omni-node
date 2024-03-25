@@ -75,7 +75,7 @@ async fn process_request(stream: TcpStream, db: JobDb) {
             db.iter().cloned().collect()
         };
 
-        let max_jobs = job_metrics(jobs_shard);
+        let max_jobs = maximum_number_jobs(jobs_shard);
 
         // Send data about the busiest server activity in the future.
         framed
@@ -91,7 +91,7 @@ async fn process_request(stream: TcpStream, db: JobDb) {
 /// # Remark
 /// In a different scenario where the job data is larger, a more specific data structure, such as a
 /// treap (random binary search tree), could be implemented to avoid copying.
-fn job_metrics(jobs_shard: Vec<Request>) -> usize {
+fn maximum_number_jobs(jobs_shard: Vec<Request>) -> usize {
     let mut jobs: Vec<_> = jobs_shard
         .iter()
         .flat_map(|req| {
@@ -116,7 +116,7 @@ fn job_metrics(jobs_shard: Vec<Request>) -> usize {
             Some(*count)
         })
         .max()
-        .unwrap();
+        .expect("There is at least one job description.");
 
     // List the currently running jobs.
     let now = Local::now();
@@ -138,4 +138,79 @@ fn job_metrics(jobs_shard: Vec<Request>) -> usize {
 enum Bound {
     Start,
     End,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use chrono::Local;
+    use std::time::Duration;
+    use uuid::Uuid;
+
+    #[test]
+    #[should_panic(expected = "There is at least one job description.")]
+    fn test_maximum_number_jobs_empty() {
+        let jobs = vec![];
+
+        assert_eq!(maximum_number_jobs(jobs), 0);
+    }
+
+    #[test]
+    fn test_maximum_number_jobs_simple() {
+        let now = Local::now();
+
+        let jobs = vec![Request {
+            start_time: now,
+            duration: Duration::from_secs(1),
+            id: Uuid::new_v4(),
+        }];
+
+        assert_eq!(maximum_number_jobs(jobs), 1);
+    }
+
+    #[test]
+    fn test_maximum_number_jobs_double() {
+        let now = Local::now();
+
+        let jobs = vec![
+            Request {
+                start_time: now,
+                duration: Duration::from_secs(2),
+                id: Uuid::new_v4(),
+            },
+            Request {
+                start_time: now + Duration::from_secs(1),
+                duration: Duration::from_secs(1),
+                id: Uuid::new_v4(),
+            },
+        ];
+
+        assert_eq!(maximum_number_jobs(jobs), 2);
+    }
+
+    #[test]
+    fn test_maximum_number_jobs_overlap() {
+        let now = Local::now();
+
+        let jobs = vec![
+            Request {
+                start_time: now,
+                duration: Duration::from_secs(3),
+                id: Uuid::new_v4(),
+            },
+            Request {
+                start_time: now + Duration::from_secs(1),
+                duration: Duration::from_secs(3),
+                id: Uuid::new_v4(),
+            },
+            Request {
+                start_time: now + Duration::from_secs(2),
+                duration: Duration::from_secs(3),
+                id: Uuid::new_v4(),
+            },
+        ];
+
+        assert_eq!(maximum_number_jobs(jobs), 3);
+    }
 }
