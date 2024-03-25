@@ -1,3 +1,6 @@
+//! The `omni_node::client` module essentially exposes the [`start`] function, while keeping the
+//! rest of the items as client implementation details.
+
 use anyhow::Context;
 use chrono::{DateTime, Local};
 use futures::prelude::*;
@@ -15,6 +18,8 @@ use crate::{Request, Response};
 // The client terminates after sending 30 jobs.
 const REQUESTS_NUMBER: usize = 30;
 
+/// Start a client that will connect to a server on `ip_addr:port`. The default server address is
+/// `localhost:9696`.
 pub async fn start(ip_addr: Option<IpAddr>, port: Option<u16>) -> anyhow::Result<()> {
     let ip_addr = ip_addr.unwrap_or(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
     let port = port.unwrap_or(9696);

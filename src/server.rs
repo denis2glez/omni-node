@@ -1,3 +1,6 @@
+//! The `omni_node::server` module essentially exposes the [`start`] function, while keeping the
+//! rest of the items as server implementation details.
+
 use anyhow::Context;
 use chrono::Local;
 use futures::prelude::*;
@@ -14,6 +17,7 @@ use crate::{Request, Response};
 
 type JobDb = Arc<Mutex<BTreeSet<Request>>>;
 
+/// Start a server that listen on `localhost:9696` for incoming TCP connections.
 pub async fn start(ip_addr: Option<IpAddr>, port: Option<u16>) -> anyhow::Result<()> {
     let ip_addr = ip_addr.unwrap_or(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
     let port = port.unwrap_or(9696);
@@ -45,6 +49,7 @@ pub async fn start(ip_addr: Option<IpAddr>, port: Option<u16>) -> anyhow::Result
     }
 }
 
+/// Process an incoming request receiving a TCP stream and an Arc handle as arguments.
 async fn process_request(stream: TcpStream, db: JobDb) {
     // Delimit frames using a length header.
     let transport = Framed::new(stream, LengthDelimitedCodec::new());

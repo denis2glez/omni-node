@@ -1,3 +1,6 @@
+//! This module contains definitions of the [`Request`] and [`Response`] message types that are
+//! relevant to both modes of operation.
+
 pub mod client;
 pub mod server;
 
