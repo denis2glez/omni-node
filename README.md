@@ -107,7 +107,7 @@ cargo run --release
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
-You can use any of the tarballs in the [Releases section](https://github.com/denis2glez/p2p-handshake/releases)
+You can use any of the tarballs in the [Releases section](https://github.com/denis2glez/omni-node/releases)
 to deploy the software according to your requirements. These are automatically generated using the
 release workflow after tagging a new version.
 
