@@ -7,7 +7,7 @@ use std::time::Duration;
 use uuid::Uuid;
 
 /// Clients will send information about scheduled jobs in the form of (start time, duration, id).
-#[derive(Debug, Clone, Serialize, Deserialize, Ord, PartialOrd, Eq, PartialEq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Ord, PartialOrd, Eq, PartialEq)]
 pub struct Request {
     /// Random timestamp in the near future.
     pub start_time: DateTime<Utc>,
@@ -19,7 +19,7 @@ pub struct Request {
 
 /// The server will send back to the client the maximum number of concurrent jobs scheduled at the
 /// busiest interval in the future.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Response {
     /// Maximum number of concurrent jobs scheduled at the busiest interval.
     pub max_jobs: usize,
