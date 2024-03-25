@@ -2,7 +2,7 @@
 //! rest of the items as client implementation details.
 
 use anyhow::Context;
-use chrono::{DateTime, Local};
+use chrono::{Local, TimeZone};
 use futures::prelude::*;
 use rand::Rng;
 use std::net::{IpAddr, Ipv4Addr};
@@ -41,7 +41,9 @@ pub async fn start(ip_addr: Option<IpAddr>, port: Option<u16>) -> anyhow::Result
         let now = Local::now().timestamp_millis();
 
         let job = Request {
-            start_time: DateTime::from_timestamp_millis(rng.gen_range(now..now + 600_000)).unwrap(),
+            start_time: Local
+                .timestamp_millis_opt(rng.gen_range(now..now + 600_000))
+                .unwrap(),
             duration: Duration::from_millis(rng.gen_range(10_000..1_000_000)),
             id: Uuid::new_v4(),
         };

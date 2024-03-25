@@ -4,7 +4,7 @@
 pub mod client;
 pub mod server;
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 use uuid::Uuid;
@@ -13,7 +13,7 @@ use uuid::Uuid;
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Ord, PartialOrd, Eq, PartialEq)]
 pub struct Request {
     /// Random timestamp in the near future.
-    pub start_time: DateTime<Utc>,
+    pub start_time: DateTime<Local>,
     /// Duration ranging randomly between 10 and 1000 seconds.
     pub duration: Duration,
     /// Unique job ID without requiring a central allocating authority.
